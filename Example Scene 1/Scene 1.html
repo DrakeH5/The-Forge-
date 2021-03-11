@@ -1,0 +1,87 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body scroll="no" style="overflow: hidden">
+<canvas id="canvas"></canvas>
+<div id="Sprites">
+  <img id="player_img" src="sprites\Player-Placeholder.jpg"></img>
+  <img id="sword1_img" src="sprites\sword1.png"/>
+  <img id="img" src="sprites\img.png"/>
+  <img id="red" src="sprites\red.png"/>
+  <img id="blue" src="sprites\blue.png"/>
+</div>
+<div id="Audio">
+
+</div>
+<style>
+  #canvas {
+    background-color: black;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+  }
+  #sprites {
+    width: 0;
+    height: 0;
+    position: relative;
+    top: -200%;
+    left: -200%;
+  }
+</style>
+<script src="scripts\colisions.js"></script>
+<script src="scripts\player.js"></script>
+<script src="scripts\player_movement.js"></script>
+<script src="scripts\enemy.js"></script>
+<script src="scripts\map.js"></script>
+<script src="scripts\weapons.js"></script>
+<script src="scripts\raycast.js"></script>
+<script>
+
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+$('#canvas').attr("width",$(window).width());
+  $('#canvas').attr("height",$(window).height());
+
+
+var fps = 50; //controls the frames per second
+
+var gravity = 0; //controls gravity multiplier
+
+var i=1;
+map.forEach(searchForPlayer);
+function searchForPlayer(item) {
+  if(item.indexOf("@")>-1){
+    localStorage.player_x = (item.indexOf("@")*localStorage.width)*1;
+    localStorage.player_y = (i*localStorage.height)*1;
+  }
+  i+=1;
+}
+
+var player = new Player((localStorage.player_x-1)+1,(localStorage.player_y-1)+1,window.innerHeight/10,40,5);
+var sword = new Weapon(player.size/2,player.size*2,"melee",document.getElementById("sword1_img"),player,"mouse");
+
+
+var zoomX = 4; //how much you want it zoomed on the X axis
+var zoomY = 4; //how much you want it zoomed on the Y axis
+
+canvas.width=canvas.width*zoomX;
+canvas.height=canvas.height*zoomY;
+
+var camera_x = -(((localStorage.player_x-1)+1)-((canvas.width/zoomX)/2));
+var camera_y = -(((localStorage.player_y-1)+1)-((canvas.height/zoomY)/2));
+setInterval(function() {
+document.getElementById("canvas").style.left=camera_x;
+document.getElementById("canvas").style.top=camera_y;
+canvas.width=canvas.width;
+drawMap();
+player.update();
+sword.update();
+//console.log(raycast(player.x,player.y,1,1));
+},fps)
+
+</script>
+</body>
+</html>
